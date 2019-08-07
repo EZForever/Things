@@ -7,7 +7,7 @@
 创建密码重置盘时，系统会生成一个RSA公私钥对和一张自签名的证书。用户密码被公钥加密并签名，并和证书一起存储在计算机中（具体细节见下）；私钥则被保存在密码重置盘根目录下的`userkey.psw`文件中。
 
 由这个过程，我们可以得到密码重置盘的几个性质：
-- 密码重置盘与用户和密码密切相关；更换用户或用户更换密码，密码重置盘会失效。
+- 密码重置盘与用户和密码密切相关；更换用户~~或用户更换密码~~（参见`README-More.md`），密码重置盘会失效。
 - 系统识别密码重置盘只会看根目录下的`userkey.psw`文件，与其他文件一律无关。由此，使用一个可移动介质做多张密码重置盘是可行的，不过需要每次使用之前手动修改文件名。
 - 密码重置盘只能重置密码是系统有意进行的限制。由密码重置盘恢复密码是可能的。
 
@@ -21,9 +21,11 @@
 
 密码重置盘的创建向导和使用向导都在系统的凭据管理器`keymgr.dll`中，可以使用命令手动调用：
 
-创建向导：`rundll32 keymgr.dll,PRShowSaveWizardEx`
+创建向导（当前用户）：`rundll32 keymgr.dll,PRShowSaveWizardEx`
 
-使用向导：`rundll32 keymgr.dll,PRShowRestoreWizardEx`
+创建向导（指定用户）：`rundll32 keymgr.dll,PRShowSaveFromMsginaW <用户名>`
+
+重置向导（指定用户）：`rundll32 keymgr.dll,PRShowRestoreWizardEx <用户名>`（参见`README-More.md`）
 
 在启动向导之前要确保电脑中已有可移动介质插入，否则向导会报错，拒绝启动。
 
@@ -31,7 +33,7 @@
 
 证书因为只做签名目的与恢复密码无关，不做深入研究。
 
-生成的证书被放在本机的一个名为`Recovery`的存储区中，在MMC中可见（`certlm.msc`）。这些证书具有如下性质：
+生成的证书被放在本地计算机的一个名为`Recovery`的存储区中。这些证书具有如下性质：
 - 颁发给/颁发者：空
 - 有效期从：创建密码重置盘的时间
 - 有效期至：创建密码重置盘的时间 + 5年
@@ -42,7 +44,11 @@
 
 ### 2. 密码重置盘/RSA私钥
 
-上文所述的`userkey.psw`文件，本质上是系统API `CryptExportKey`的导出结果，外加了一个8字节的文件头。私钥明文存储，文件结构见`userkey.h`。
+上文所述的`userkey.psw`文件具有只读、归档属性。
+
+在Windows XP上，`.psw`还有类型标注，名为`Password Backup`。同时在注册表中（`HKEY_CLASSES_ROOT\PSWFile`）还标注了`NoOpen`属性，即在试图打开psw类型文件时，会弹出一个“系统文件警告”提示。
+
+文件的内容本质上是系统API `CryptExportKey`的导出结果，外加了一个8字节的文件头。私钥明文存储，文件结构见`userkey.h`。
 
 由这个文件的内容，可以使用[这里提供的方法](https://stackoverflow.com/a/19855935)还原出一个标准格式的RSA私钥文件。具体操作不再赘述。
 
@@ -52,7 +58,7 @@
 
 在Windows XP上，具体的路径为`HKEY_LOCAL_MACHINE\SECURITY\Recovery\<SID>`的默认键值，类型为REG_BINARY，其中`<SID>`为用户的SID。
 
-在Windows 7及以上版本，注册表路径变为了`HKEY_LOCAL_MACHINE\C80ED86A-0D28-40dc-B379-BB594E14EA1B\<SID>`（原文如此），而且这个键变成了按需加载；密码重置盘创建完毕时这个键就会被卸载。卸载后的注册表文件位于`%SystemRoot%\System32\Microsoft\Protect\Recovery\Recovery.dat`。
+在Windows 7及以上版本，注册表路径变为了`HKEY_LOCAL_MACHINE\C80ED86A-0D28-40dc-B379-BB594E14EA1B\<SID>`（原文如此），而且这个项变成了按需加载；密码重置盘创建完毕时这个项就会被卸载。卸载后的注册表文件位于`%SystemRoot%\System32\Microsoft\Protect\Recovery\Recovery.dat`。
 
 注意：无论是注册表还是卸载后的文件，都需要至少SYSTEM权限才能够读取。
 
