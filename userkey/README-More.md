@@ -55,6 +55,8 @@ keymgr!PRRecoverPassword --> s_SSRecoverPassword --> DecryptRecoveryPassword（�
 
 这个先放放。真的太复杂了。大概瞟了几眼，发现签名中包含用户的二进制格式SID（但Windows XP的数据中好像没有），而且签名与用户密码有关（`FMyPrimitiveSHA`函数）。
 
+上面逆向`s_SSRecoverQueryStatus`方法的时候，注意到在PDB中，这个签名的结构是有名称的，为`_CRED_SIGNATURE`，但是没有定义，网上也找不到文档。
+
 *TODO*
 
 ## 3. 我有一个大胆的想法
