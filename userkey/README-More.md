@@ -15,9 +15,12 @@
 
 只要用户制作过密码重置盘，在登录密码输入错误的时候，就会出现使用密码重置盘的提示。尤其是在Windows XP上，弹出的提示框特别显眼。那么，既然系统提供了创建密码重置盘的入口，那有没有移除密码重置盘的方式呢？
 
-实践表明，只要删除了注册表数据和/或证书，登录密码输入错误的时候就不会再提示使用密码重置盘。可以推测，系统是通过查找用户SID对应的数据，再通过数据中的证书SHA1查找证书来判断其有没有可用的密码重置盘的。未进行实际分析与证明。
+实践表明，只要删除了注册表数据和/或证书，登录密码输入错误的时候就不会再提示使用密码重置盘。可以推测，系统是通过查找用户SID对应的数据，再通过数据中的证书SHA1查找证书来判断其有没有可用的密码重置盘的。逆向分析证明了这一点，调用链如下：
+```
+msgina!HandleFailedLogon（登录界面，密码错误时触发） --> msgina!PRQueryStatus（RPC） --> dpapisrv!s_SSRecoverQueryStatus --> dpapisrv!SPRecoverQueryStatus --> dpapisrv!RecoverFindRecoveryPublic --> （各种操作）
+```
 
-*TODO*
+最后的`RecoverFindRecoveryPublic`函数会先调用`RecoveryRetrieveSupplementalCredential`获取注册表数据，再根据其中存储的证书SHA1查找对应证书。和假说不同的是，找到证书之后又使用`LogonCredVerifySignature`对注册表数据进行了签名检查。并不是很清楚全零的签名（见下）为什么可以通过检查。
 
 ## 2. 密码重置盘与密码间的关系有多密切？
 
