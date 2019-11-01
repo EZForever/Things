@@ -12,15 +12,18 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	// Requires sizeUnk != 0
 	IMAGESOURCE_FILE	= 2,
 	
-	// No actual buffer is attached to the device, resulting in a dummy device
+	// No actual buffer is attached to the device (?), resulting in a dummy device
+	// Indicates FLAGS_FIXED (?)
+	// Sets STATUS_KERNEL_APC on DeviceObject->Flags
 	// Requires sizeUnk != 0
 	IMAGESOURCE_NONE	= 3,
 	
-	// Fail immediately with NT_STATUS_INVALID_PARAMETER
+	// Fail immediately with STATUS_INVALID_PARAMETER
+	// However, logic corresponding to this exists
 	IMAGESOURCE_INVALID	= 4,
 	
 	// Create the volume purely from RAM
-	// imageOffset, sizeUnk & imagePath are ignored
+	// Ignores imageOffset, sizeUnk & imagePath
 	// Not supported on Windows 7
 	IMAGESOURCE_RAM		= 5,
 };
@@ -38,6 +41,7 @@ enum RAMDISK_FLAGS : uint32_t {
 	
 	// The volume is a CDROM drive, instead of a hard drive
 	// Same effect as the Windows boot parameter "RDEXPORTASCD"
+	// Indicates FLAGS_READONLY
 	FLAGS_CDROM			= 0x20,
 };
 
