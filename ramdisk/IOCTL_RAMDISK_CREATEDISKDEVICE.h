@@ -14,7 +14,7 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	
 	// No actual buffer is attached to the device (?), resulting in a dummy device
 	// Indicates FLAGS_FIXED (?)
-	// Sets STATUS_KERNEL_APC on DeviceObject->Flags
+	// Sets 0x100 (an unknown/reserved flag) on DeviceObject->Flags
 	// Requires sizeUnk != 0
 	IMAGESOURCE_NONE	= 3,
 	
