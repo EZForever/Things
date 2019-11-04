@@ -43,7 +43,6 @@ enum RAMDISK_FLAGS : uint32_t {
 
 // The input buffer for ioctl request, confirmed on Windows 7 x64 & Windows 10 x64.
 // Windows XP version of this struct has sone noticeable differences.
-#include <pshpack1.h>
 struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// sizeof / magic
 	// Must be 0x40, regardless of actual buffer size
@@ -99,5 +98,8 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// e.g. L"\\??\\C:\\path\\to\\file.img"
 	// or L"\\GLOBAL??\\C:\\path\\to\\file.img"
 	wchar_t imagePath[4];
-};
-#include <poppack.h>
+} __attribute__((packed));
+
+// Use these if you are using VC++
+//#include <pshpack1.h>
+//#include <poppack.h>

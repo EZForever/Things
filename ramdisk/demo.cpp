@@ -29,8 +29,9 @@ int main() {
     inBuffer->imageSize = 128 * 1024 * 1024;
     inBuffer->imageOffset = 0;
     inBuffer->sizeUnk_uint64 = 0; //128 * 1024 * 1024;
-    wcscpy_s(inBuffer->imagePath, wcslen(IMAGE) + 1, IMAGE);
-
+    wcscpy(inBuffer->imagePath, IMAGE);
+    //wcscpy_s(inBuffer->imagePath, wcslen(IMAGE) + 1, IMAGE); // Use this if VC++ is complaining about unsafe wcscpy()
+    
     printf("IOCTL_CODE = %#x\n", IOCTL_RAMDISK_CREATEDISKDEVICE);
     printf("inBufferSize = %d\n", inBufferSize);
     printf("inBuffer = ");
