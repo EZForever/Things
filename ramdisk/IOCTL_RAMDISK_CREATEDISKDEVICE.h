@@ -1,6 +1,7 @@
-#include <windows.h>
-#include <objbase.h>
-#include <cstdint>
+#ifndef __IOCTL_RAMDISK_CREATEDISKDEVICE_H__
+#define __IOCTL_RAMDISK_CREATEDISKDEVICE_H__
+
+#include <IOCTL_RAMDISK.h>
 
 // Create a new ramdisk volume device
 const DWORD IOCTL_RAMDISK_CREATEDISKDEVICE = 0x240000;
@@ -48,25 +49,15 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// Must be 0x40, regardless of actual buffer size
 	uint32_t magic;
 	
-	// Device ID; will be used as device name
-	union {
-		// For IMAGESOURCE_RAM or IMAGESOURCE_INVALID
-		// "\\Device\\Ramdisk%u"
-		struct {
-			uint32_t value;
-			uint32_t _[3];
-		} id_uint32;
-		
-		// For IMAGESOURCE_FILE or IMAGESOURCE_NONE
-		// "\\Device\\Ramdisk{%8x-%4x-%4x-%4x-%12x}"
-		_GUID id_guid;
-	};
+	// Device ID
+	RAMDISK_ID id;
 	
 	// Source of volume image
 	RAMDISK_IMAGESOURCE imageSource;
 	
 	// Bitflag; misc settings
-	RAMDISK_FLAGS flags;
+	uint32_t flags;
+	//RAMDISK_FLAGS flags; // Enum classes does not get along with bitwise OR
 	
 	// Unknown; not seen in any cases
 	uint32_t unk;
@@ -98,8 +89,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// e.g. L"\\??\\C:\\path\\to\\file.img"
 	// or L"\\GLOBAL??\\C:\\path\\to\\file.img"
 	wchar_t imagePath[4];
+	
 } __attribute__((packed));
 
-// Use these if you are using VC++
-//#include <pshpack1.h>
-//#include <poppack.h>
+#endif // __IOCTL_RAMDISK_CREATEDISKDEVICE_H__

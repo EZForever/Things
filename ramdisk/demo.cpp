@@ -1,13 +1,11 @@
 //g++ -static -s -Os -I$(dirname $ME) $ME -lole32 -o demo.exe
-#include <windows.h>
-#include <objbase.h>
-#include <cstdint>
-
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
 
+#include <IOCTL_RAMDISK.h>
 #include <IOCTL_RAMDISK_CREATEDISKDEVICE.h>
+#include <IOCTL_RAMDISK_SAFETOREMOVE.h>
 
 /* Hint:
 	In user mode, "\\.\\" or "\\?\\" refers to kernel namespace "\\GLOBAL??\\"
@@ -23,7 +21,7 @@ int main() {
     memset(inBuffer, 0, sizeof(IOCTL_RAMDISK_CREATEDISKDEVICE_DATA));
 	
     inBuffer->magic = 0x40;
-    CoCreateGuid(&inBuffer->id_guid);
+    CoCreateGuid(&inBuffer->id.guid);
     inBuffer->imageSource = IMAGESOURCE_FILE;
     inBuffer->flags = FLAGS_FIXED;
     inBuffer->imageSize = 128 * 1024 * 1024;
@@ -40,7 +38,7 @@ int main() {
     putchar('\n');
     
     HANDLE hDevice;
-    hDevice = CreateFile("\\\\.\\GLOBALROOT\\Device\\Ramdisk", 0, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    hDevice = CreateFile(RAMDISK_CONTROLLER, 0, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     printf("hDevice = %p, GetLastError() = %d\n", hDevice, GetLastError());
     
     char outBuffer[64]; // Actually there will not be any output
@@ -52,6 +50,12 @@ int main() {
     for (int i = 0; i < rcv; i++)
         printf("%02hhx ", outBuffer[i]);
     putchar('\n');
+	
+	// This makes the new device easlier to remove
+	IOCTL_RAMDISK_SAFETOREMOVE_DATA inBuffer2 = {20};
+	inBuffer2.id.guid = inBuffer->id.guid;
+	ret = DeviceIoControl(hDevice, IOCTL_RAMDISK_SAFETOREMOVE, &inBuffer2, sizeof(inBuffer2), outBuffer, sizeof(outBuffer), &rcv, NULL);
+    printf("ret = %d, rcv = %d, GetLastError() = %d\n", ret, rcv, GetLastError());
 	
     CloseHandle(hDevice);
     delete[] (char *)inBuffer;
