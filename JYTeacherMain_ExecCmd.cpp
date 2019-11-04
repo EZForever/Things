@@ -4,24 +4,29 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 
 using namespace std;
 
-const char MYMAGIC1[12 + 1] = "\x44\x4D\x4F\x43\x00\x00\x01\x00\x6E\x03\x00\x00";
-const char MYMAGIC2[32 + 1] = "\x20\x4E\x00\x00\x0A\xC7\xE1\x23\x61\x03\x00\x00\x61\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x0F\x00\x00\x00\x01\x00\x00\x00";
+const char EXECCMD_MAGIC1[12 + 1] = "\x44\x4D\x4F\x43\x00\x00\x01\x00\x6E\x03\x00\x00";
+const char EXECCMD_MAGIC2[32 + 1] = "\x20\x4E\x00\x00\x0A\xC7\xE1\x23\x61\x03\x00\x00\x61\x03\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x0F\x00\x00\x00\x01\x00\x00\x00";
+const char EXECCMD_PADDING[16 + 1] = "\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
 struct ExecCmd {
 	char magic1[12];
 	char random[16];
 	char magic2[32];
 	wchar_t cmd[256];
-	wchar_t arg[167];
+	wchar_t arg[159];
+	char padding[16];
 	
 	ExecCmd(const wchar_t *cmd, const wchar_t *arg) {
-		memcpy(magic1, MYMAGIC1, 12);
-		memcpy(magic2, MYMAGIC2, 32);
+		memcpy(magic1, EXECCMD_MAGIC1, 12);
+		memcpy(magic2, EXECCMD_MAGIC2, 32);
+		memcpy(padding, EXECCMD_PADDING, 16);
 		wcscpy(this->cmd, cmd);
 		wcscpy(this->arg, arg);
+		
 		for(int i = 0; i < 16; i++)
 			random[i] = rand() & 0xff;
 	}
@@ -45,8 +50,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	
-	// I know... but pure randomness is not that necessary at here.
-	srand(0x523000);
+	srand(time(NULL));
 	
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
