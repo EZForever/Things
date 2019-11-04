@@ -4,7 +4,7 @@
 #include <IOCTL_RAMDISK.h>
 
 // Mark the specific disk device as "safe to remove"
-// Without this, you can remove device just fine, but all the resources cosumed by the device will not be released, until you disable the controller
+// Without this, you can remove device just fine, but all the resources consumed by the device will not be released, until you disable the controller
 // Note the disk device still work after calling this
 const DWORD IOCTL_RAMDISK_SAFETOREMOVE = 0x240004;
 
