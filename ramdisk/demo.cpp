@@ -51,10 +51,10 @@ int main() {
         printf("%02hhx ", outBuffer[i]);
     putchar('\n');
 	
-	// This makes the new device easlier to remove
-	IOCTL_RAMDISK_SAFETOREMOVE_DATA inBuffer2 = {20};
-	inBuffer2.id.guid = inBuffer->id.guid;
-	ret = DeviceIoControl(hDevice, IOCTL_RAMDISK_SAFETOREMOVE, &inBuffer2, sizeof(inBuffer2), outBuffer, sizeof(outBuffer), &rcv, NULL);
+    // This makes the new device easlier to remove
+    IOCTL_RAMDISK_SAFETOREMOVE_DATA inBuffer2 = {20};
+    inBuffer2.id.guid = inBuffer->id.guid;
+    ret = DeviceIoControl(hDevice, IOCTL_RAMDISK_SAFETOREMOVE, &inBuffer2, sizeof(inBuffer2), outBuffer, sizeof(outBuffer), &rcv, NULL);
     printf("ret = %d, rcv = %d, GetLastError() = %d\n", ret, rcv, GetLastError());
 	
     CloseHandle(hDevice);
