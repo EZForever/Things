@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <objbase.h>
-
 #include <cstdint>
 
 // Create a new ramdisk volume device
@@ -13,8 +12,6 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	IMAGESOURCE_FILE	= 2,
 	
 	// No actual buffer is attached to the device (?), resulting in a dummy device
-	// Indicates FLAGS_FIXED (?)
-	// Sets 0x100 (an unknown/reserved flag) on DeviceObject->Flags
 	// Requires sizeUnk != 0
 	IMAGESOURCE_NONE	= 3,
 	
@@ -45,6 +42,8 @@ enum RAMDISK_FLAGS : uint32_t {
 	FLAGS_CDROM			= 0x20,
 };
 
+// The input buffer for ioctl request, confirmed on Windows 7 x64 & Windows 10 x64.
+// Windows XP version of this struct has sone noticeable differences.
 #include <pshpack1.h>
 struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// sizeof / magic
@@ -53,7 +52,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	
 	// Device ID; will be used as device name
 	union {
-		// For IMAGESOURCE_RAM
+		// For IMAGESOURCE_RAM or IMAGESOURCE_INVALID
 		// "\\Device\\Ramdisk%u"
 		struct {
 			uint32_t value;
@@ -82,8 +81,19 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	uint64_t imageOffset;
 	
 	// Size for something unknown
-	// Set to == imageSize is fine for most cases
-	uint64_t sizeUnk;
+	union {
+		// IMAGESOURCE_FILE: ???
+		// If invalid, the driver will santize these parameters, or use default
+		// The santized values will be the size factor of a buffer (count:length << 6) gave to the newly-created device
+		struct {
+			uint32_t count;
+			uint32_t length;
+		} sizeUnk_view;
+		
+		// Image sources other than IMAGESOURCE_FILE
+		// Set to == imageSize is fine for most cases
+		uint64_t sizeUnk_uint64;
+	};
 	
 	// Path *in kernel namespace* to volume image file (RDPATH)
 	// Can be longer than 4 `wchar_t`s, but must end with L'\0'
