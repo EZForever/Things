@@ -8,11 +8,10 @@ const DWORD IOCTL_RAMDISK_CREATEDISKDEVICE = 0x240000;
 enum RAMDISK_IMAGESOURCE : uint32_t {
 	// Load/save volume from/to a image file
 	// Requires imagePath
-	// Requires sizeUnk != 0
 	IMAGESOURCE_FILE	= 2,
 	
 	// No actual buffer is attached to the device (?), resulting in a dummy device
-	// Requires sizeUnk != 0
+	// Requires sizeUnk_uint64 != 0
 	IMAGESOURCE_NONE	= 3,
 	
 	// Fail immediately with STATUS_INVALID_PARAMETER
@@ -61,7 +60,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 		
 		// For IMAGESOURCE_FILE or IMAGESOURCE_NONE
 		// "\\Device\\Ramdisk{%8x-%4x-%4x-%4x-%12x}"
-		struct _GUID id_guid;
+		_GUID id_guid;
 	};
 	
 	// Source of volume image
@@ -83,7 +82,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// Size for something unknown
 	union {
 		// IMAGESOURCE_FILE: ???
-		// If invalid, the driver will santize these parameters, or use default
+		// If invalid, the driver will santize these parameters, or use default values (16, 0x100000)
 		// The santized values will be the size factor of a buffer (count:length << 6) gave to the newly-created device
 		struct {
 			uint32_t count;
