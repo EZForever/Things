@@ -43,8 +43,8 @@ enum RAMDISK_FLAGS : uint32_t {
 	FLAGS_CDROM			= 0x20,
 };
 
-// The input buffer for ioctl request, confirmed on Windows 7 x64 & Windows 10 x64.
-// Windows XP version of this struct has sone noticeable differences.
+// The input buffer for ioctl request, confirmed on Windows 7 x64 & Windows 10 x64
+// Windows XP version of this struct has some noticeable differences, see below
 struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// sizeof / magic
 	// Must be 0x40, regardless of actual buffer size
@@ -90,6 +90,47 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// e.g. L"\\??\\C:\\path\\to\\file.img"
 	// or L"\\GLOBAL??\\C:\\path\\to\\file.img"
 	wchar_t imagePath[4];
+	
+} __attribute__((packed));
+
+// Windows XP specific version of IOCTL_RAMDISK_CREATEDISKDEVICE_DATA
+// NOT TESTED, only here for reference
+struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA_XP {
+	// Must be 0x38
+	uint32_t magic;
+	
+	RAMDISK_ID id;
+	
+	// IMAGESOURCE_INVALID still fail with STATUS_INVALID_PARAMETER
+	// But the "registry disks" will be created under this value
+	RAMDISK_IMAGESOURCE imageSource;
+	
+	uint32_t flags;
+	
+	uint32_t unk;
+	
+	uint64_t imageSize;
+	
+	uint32_t imageOffset;
+		
+	union {
+		struct {
+			uint32_t count;
+			uint32_t length;
+		} sizeUnk_view;
+		
+		uint64_t sizeUnk_uint64;
+		
+		// If IMAGESOURCE_NONE and not FLAGS_NOSYMLINK, another symlink to "\\DosDevices\\%wc:" is made,
+		//	 where "%wc" is sizeUnk_diskletter.v
+		struct {
+			uint32_t _0;
+			wchar_t v;
+			wchar_t _1;
+		} sizeUnk_diskletter;
+	};
+	
+	wchar_t imagePath[2];
 	
 } __attribute__((packed));
 

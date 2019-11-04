@@ -14,10 +14,6 @@ Windows Registry Editor Version 5.00
 	"DiskSize"=dword:00000100
 
 
-; BTW, back in the time of Windows XP, you can create A SERIES OF ramdisks with some settings other than above
-; But since Windows XP is quite outdated and has a pretty different data structure layout, I'm not going that deep
-
-
 ; Advanced settings (default values shown below)
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
 
@@ -45,4 +41,20 @@ Windows Registry Editor Version 5.00
 
 	; 0x1000000 <= Maximum
 	"MaximumPerDiskViewLength"=dword:00000000
+
+
+; Back in the time of Windows XP, you can create A SERIES OF ramdisks with some settings other than above
+; They will have IMAGESOURCE_INVALID, FLAGS_FIXED along with an unknown flag value 0x04
+; NOT TESTED
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
+
+	; The disks' IDs will be the same as their numbers at here
+	; REG_BINARY to input buffer: {uint32_t sizeUnk_view.count; uint32_t _; uint32_t imageSize}
+	"DISK0"=hex:00,00,01,00, 00,00,00,00, 00,00,00,10
+
+	; The numbers go up continuously ("DISK%u")
+	; Iteration ends with a missing value
+	"DISK1"=hex:00,00,01,00, 00,00,00,00, 00,00,00,10
+	"DISK2"=hex:00,00,01,00, 00,00,00,00, 00,00,00,10
+	; ...
 
