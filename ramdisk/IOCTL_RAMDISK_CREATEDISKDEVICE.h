@@ -16,12 +16,13 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	IMAGESOURCE_NONE	= 3,
 	
 	// Fail immediately with STATUS_INVALID_PARAMETER
-	// However, logic corresponding to this exists
+	// This is for Windows XP era, when the driver will create A SERIES OF disk devices based on registry settings
+	// Some of the logic remains in current (Windows 10) version of code
 	IMAGESOURCE_INVALID	= 4,
 	
 	// Create the volume purely from RAM
 	// Ignores imageOffset, sizeUnk & imagePath
-	// Not supported on Windows 7
+	// Not supported on (and before) Windows 7
 	IMAGESOURCE_RAM		= 5,
 };
 

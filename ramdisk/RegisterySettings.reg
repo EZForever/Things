@@ -1,0 +1,48 @@
+Windows Registry Editor Version 5.00
+
+; Sorry about the indentations, but this is the only way I can think of to make a registry export more like a document
+
+; Create a RAM-based (IMAGESOURCE_RAM) disk device whenever the controller get loaded
+; This disk will have an ID of (uint32_t)-1 or {ffffffff-0000-0000-0000-000000000000}
+; Not supported on (and before) Windows 7
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
+
+	; rt
+	"Enabled"=dword:00000001
+
+	; Disk size in MB, with a maximum value of 2GB
+	"DiskSize"=dword:00000100
+
+
+; BTW, back in the time of Windows XP, you can create A SERIES OF ramdisks with some settings other than above
+; But since Windows XP is quite outdated and has a pretty different data structure layout, I'm not going that deep
+
+
+; Advanced settings (default values shown below)
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
+
+	; Force the creation of controller device, even if the driver is not installed as a device (i.e. loaded by "sc start ramdisk")
+	; Indicated by a system boot drive of "ramdisk(*)" ("ramdisk(0)" on <= Windows 7)
+	"ReportDetectedDevice"=dword:00000000
+
+	; Force all disk devices to be removable, regardless of FLAGS_FIXED
+	"MarkRamdisksAsRemovable"=dword:00000000
+
+
+; Unknown; related with unkSize
+; They all have a default value of 0, but driver will santize these values
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
+
+	; 2 <= Minimum <= Default <= Maximum <= 256
+	"MinimumViewCount"=dword:00000000
+	"DefaultViewCount"=dword:00000000
+	"MaximumViewCount"=dword:00000000
+
+	; 0x10000 <= Minimum <= Default <= Maximum <= 0x40000000
+	"MinimumViewLength"=dword:00000000
+	"DefaultViewLength"=dword:00000000
+	"MaximumViewLength"=dword:00000000
+
+	; 0x1000000 <= Maximum
+	"MaximumPerDiskViewLength"=dword:00000000
+
