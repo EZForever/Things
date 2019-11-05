@@ -11,7 +11,9 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	// Requires imagePath
 	IMAGESOURCE_FILE	= 2,
 	
-	// No actual buffer is attached to the device (?), resulting in a dummy device
+	// Do not allocate resources for this volume; instead use resources from the bootloader
+	// Work in correlation with BOOTMGR's ramdisk capability
+	// Similar to Firadisk for GRUB4DOS
 	// Requires sizeUnk_uint64 != 0
 	IMAGESOURCE_NONE	= 3,
 	
@@ -64,10 +66,10 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	uint32_t unk;
 	
 	// IMAGESOURCE_RAM: The size of volume in bytes
-	// IMAGESOURCE_FILE: Desired length of file to be loaded as disk (RDIMAGELENGTH)
+	// IMAGESOURCE_FILE: End offset of file to be loaded as disk (RDIMAGELENGTH)
 	uint64_t imageSize;
 	
-	// Desired offset of file to be loaded as disk in bytes (RDIMAGEOFFSET)
+	// Start offset of file to be loaded as disk in bytes (RDIMAGEOFFSET)
 	uint64_t imageOffset;
 	
 	// Size for something unknown
@@ -133,5 +135,22 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA_XP {
 	wchar_t imagePath[2];
 	
 } __attribute__((packed));
+
+/* As on my Windows 10 RE, The system's "X:" drive is created by ntoskrnl.exe (the driver is set to "load at boot time" under Windows RE) in ntoskrnl!RamdiskStart,
+	with parameters as follows:
+
+IOCTL_RAMDISK_CREATEDISKDEVICE_DATA RAMDISK_WINRE = {
+	.magic = 0x40,
+	.id.guid = {d9b257fc-684e-4dcb-ab79-03cfa2f6b750}, // hardcoded as symbol ntoskrnl!RamdiskBootDiskGuid
+	.imageSource = IMAGESOURCE_NONE,
+	.flags = FLAGS_FIXED | FLAGS_READONLY,
+	.unk = 0,
+	.imageSize = 3161088, // == RDIMAGELENGTH in boot parameter
+	.imageOffset = 8192, // == RDIMAGEOFFSET in boot parameter
+	.sizeUnk_uint64 = 0x576, // ???
+	imagePath = L"",
+};
+
+*/
 
 #endif // __IOCTL_RAMDISK_CREATEDISKDEVICE_H__
