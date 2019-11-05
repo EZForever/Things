@@ -25,7 +25,7 @@ Windows Registry Editor Version 5.00
 	"MarkRamdisksAsRemovable"=dword:00000000
 
 
-; Unknown; related with unkSize
+; More detailed settings about imageView
 ; They all have a default value of 0, but driver will santize these values
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
 
@@ -49,7 +49,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Parameters]
 
 	; The disks' IDs will be the same as their numbers at here
-	; REG_BINARY to input buffer: {uint32_t sizeUnk_view.count; uint32_t _; uint32_t imageSize}
+	; REG_BINARY to input buffer: {uint32_t imageView.count; uint32_t _; uint32_t imageSize}
 	"DISK0"=hex:00,00,01,00, 00,00,00,00, 00,00,00,10
 
 	; The numbers go up continuously ("DISK%u")

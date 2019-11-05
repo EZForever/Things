@@ -14,7 +14,7 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	// Do not allocate resources for this volume; instead use resources from the bootloader
 	// Work in correlation with BOOTMGR's ramdisk capability
 	// Similar to Firadisk for GRUB4DOS
-	// Requires sizeUnk_uint64 != 0
+	// Requires imageBuffer != NULL
 	IMAGESOURCE_NONE	= 3,
 	
 	// Fail immediately with STATUS_INVALID_PARAMETER
@@ -23,7 +23,7 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	IMAGESOURCE_INVALID	= 4,
 	
 	// Create the volume purely from RAM
-	// Ignores imageOffset, sizeUnk & imagePath
+	// Ignores imageOffset, unkView/imageBuffer & imagePath
 	// Not supported on (and before) Windows 7
 	IMAGESOURCE_RAM		= 5,
 };
@@ -72,19 +72,21 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	// Start offset of file to be loaded as disk in bytes (RDIMAGEOFFSET)
 	uint64_t imageOffset;
 	
-	// Size for something unknown
+	// Things about how resources are manipulated
 	union {
-		// IMAGESOURCE_FILE: ???
+		// IMAGESOURCE_FILE: How many (and how big) the file mappings in memory should be
 		// If invalid, the driver will santize these parameters, or use default values (16, 0x100000)
-		// The santized values will be the size factor of a buffer (count:length << 6) gave to the newly-created device
+		// The santized values will be the size factor of a buffer (count * 64) gave to the newly-created device
 		struct {
 			uint32_t count;
 			uint32_t length;
-		} sizeUnk_view;
+		} imageView;
 		
-		// Image sources other than IMAGESOURCE_FILE
-		// Set to == imageSize is fine for most cases
-		uint64_t sizeUnk_uint64;
+		// IMAGESOURCE_NONE: Physical address to a pre-allocated buffer (?)
+		void *imageBuffer;
+		
+		// IMAGESOURCE_INVALID: ???
+		uint64_t unkSize;
 	};
 	
 	// Path *in kernel namespace* to volume image file (RDPATH)
@@ -119,9 +121,9 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA_XP {
 		struct {
 			uint32_t count;
 			uint32_t length;
-		} sizeUnk_view;
+		} imageView;
 		
-		uint64_t sizeUnk_uint64;
+		void *imageBuffer;
 		
 		// If IMAGESOURCE_NONE and not FLAGS_NOSYMLINK, another symlink to "\\DosDevices\\%wc:" is made,
 		//	 where "%wc" is sizeUnk_diskletter.v
@@ -129,7 +131,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA_XP {
 			uint32_t _0;
 			wchar_t v;
 			wchar_t _1;
-		} sizeUnk_diskletter;
+		} sizeUnk_diskletter; // Is this field really here?
 	};
 	
 	wchar_t imagePath[2];
@@ -147,7 +149,7 @@ IOCTL_RAMDISK_CREATEDISKDEVICE_DATA RAMDISK_WINRE = {
 	.unk = 0,
 	.imageSize = 3161088, // == RDIMAGELENGTH in boot parameter
 	.imageOffset = 8192, // == RDIMAGEOFFSET in boot parameter
-	.sizeUnk_uint64 = 0x576, // ???
+	.imageBuffer = 0x576, // not sure if stays constant
 	imagePath = L"",
 };
 

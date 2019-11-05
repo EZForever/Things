@@ -26,7 +26,7 @@ int main() {
     inBuffer->flags = FLAGS_FIXED;
     inBuffer->imageSize = 128 * 1024 * 1024;
     inBuffer->imageOffset = 0;
-    inBuffer->sizeUnk_uint64 = 0; //128 * 1024 * 1024;
+    inBuffer->imageBuffer = NULL;
     wcscpy(inBuffer->imagePath, IMAGE);
     //wcscpy_s(inBuffer->imagePath, wcslen(IMAGE) + 1, IMAGE); // Use this if VC++ is complaining about unsafe wcscpy()
     
