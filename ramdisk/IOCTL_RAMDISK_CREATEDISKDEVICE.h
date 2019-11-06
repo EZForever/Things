@@ -143,13 +143,14 @@ IOCTL_RAMDISK_CREATEDISKDEVICE_DATA RAMDISK_WINRE = {
 	.magic = 0x40,
 	.id.guid = {d9b257fc-684e-4dcb-ab79-03cfa2f6b750}, // hardcoded as symbol ntoskrnl!RamdiskBootDiskGuid
 	.imageSource = IMAGESOURCE_NONE,
-	.flags = FLAGS_FIXED | FLAGS_READONLY,
-	.unk = 0,
+	.flags = FLAGS_FIXED, // FLAGS_READONLY not in code, but exists in created device
 	.imageSize = 3161088, // == RDIMAGELENGTH in boot parameter
 	.imageOffset = 8192, // == RDIMAGEOFFSET in boot parameter
 	.imageBuffer = 0x576, // not sure if stays constant
 	imagePath = L"",
 };
+
+TODO: How does this device always get a "X:" drive letter?
 
 */
 
