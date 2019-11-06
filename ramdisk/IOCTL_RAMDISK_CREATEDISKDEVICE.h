@@ -28,7 +28,7 @@ enum RAMDISK_IMAGESOURCE : uint32_t {
 	IMAGESOURCE_RAM		= 5,
 };
 
-enum RAMDISK_FLAGS : uint32_t {
+enum RAMDISK_FLAGS : uint64_t {
 	// The volume is write-protected
 	FLAGS_READONLY		= 0x01,
 	
@@ -59,11 +59,8 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA {
 	RAMDISK_IMAGESOURCE imageSource;
 	
 	// Bitflag; misc settings
-	uint32_t flags;
+	uint64_t flags;
 	//RAMDISK_FLAGS flags; // Enum classes does not get along with bitwise OR
-	
-	// Unknown; not seen in any cases
-	uint32_t unk;
 	
 	// IMAGESOURCE_RAM: The size of volume in bytes
 	// IMAGESOURCE_FILE: End offset of file to be loaded as disk (RDIMAGELENGTH)
@@ -111,6 +108,7 @@ struct IOCTL_RAMDISK_CREATEDISKDEVICE_DATA_XP {
 	
 	uint32_t flags;
 	
+	// Not known if this is also considered as part of flags on a 32-bit system
 	uint32_t unk;
 	
 	uint64_t imageSize;
