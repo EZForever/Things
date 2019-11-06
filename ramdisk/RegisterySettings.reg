@@ -10,8 +10,13 @@ Windows Registry Editor Version 5.00
 	; rt
 	"Enabled"=dword:00000001
 
-	; Disk size in MB, with a maximum value of 2GB
+	; Disk size in MB, with a maximum value of 2GB (dword:00020000)
 	"DiskSize"=dword:00000100
+
+
+; Fun fact: Hyper-V Server 2019 has the ramdisk driver enabled by default (but not activated), along with some strange parameters:
+;	"Enabled"=dword:00000001
+;	"DiskSize"=dword:10000000
 
 
 ; Advanced settings (default values shown below)
