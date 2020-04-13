@@ -2,18 +2,24 @@
 # litclock_annotated.csv from https://github.com/mmattozzi/LiteraryClockScreenSaver
 # litclock_annotated_improved.csv from https://github.com/zenbuffy/LiteraryClock
 
-currln=$(grep "^$(date +%H:%M)" litclock_annotated_improved.csv | shuf -n 1)
-if [[ -z $currln ]]; then
-    echo -e "It is \e[32m$(date +%H:%M)\e[0m, a sad minute without its own quote."
-    exit 1
-fi
-hilight=$(echo "$currln" | awk -F '|' '{ print $2 }')
-hilighte=$(echo -e "\e[32m$hilight\e[0m")
-quote=$(echo "$currln" | awk -F '|' '{ print $3 }' | sed "s/$hilight/_/g" | sed "s/_/$hilighte/g")
-cite=$(echo "$currln" | awk -F '|' '{ print $4 }')
-author=$(echo "$currln" | awk -F '|' '{ print $5 }')
+function litclock {
+    local tm=${1:-$(date +%H:%M)}
+    local db=${2:-"litclock_annotated_improved.csv"}
+    
+    local IFS='|'
+    local entry=($(grep "^$tm" "$db" | shuf -n 1))
+    if [[ -z $entry ]]; then
+        echo -e "It is \e[32m$tm\e[0m, a sad minute without its own quote."
+        return 1
+    fi
+    
+    local quote=${entry[2]//${entry[1]}/$'\e[32m'${entry[1]}$'\e[0m'}
+    local cite="-- \"${entry[3]}\", ${entry[4]}"
+    
+    printf "%s\n\e[1;30m%80s\e[0m\n" "$quote" "$cite"
+    return 0
+}
 
-echo $quote
+litclock $*
 echo
-echo -- $cite, $author
-exit 0
+
