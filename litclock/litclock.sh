@@ -4,7 +4,7 @@
 
 function litclock {
     local tm=${1:-$(date +%H:%M)}
-    local db=${2:-"litclock_annotated_improved.csv"}
+    local db=${2:-$(dirname $0)"/litclock_annotated_improved.csv"}
     
     local IFS='|'
     local entry=($(grep "^$tm" "$db" | shuf -n 1))
