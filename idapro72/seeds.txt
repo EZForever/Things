@@ -1,0 +1,27 @@
+password     // IDA ver // gen // seed[, seed]
+qY2jts9hEJGy // IDA 7.0 // Old // 3AC5C29B, BAC5C29B
+ZFdLqEM2QMVe // IDA 6.8 // Old // 2FF0126C, AFF0126C
+PDxD5J82DsFy // IDA 6.8 // New // 842411E7
+FgVQyXZY2XFk // IDA 6.7 // New // C6462A4C
+itJpyHidszaR // IDA 6.6 // Old // 25681E67, A5681E67
+6VYGSyLguBfi // IDA 6.3 // Old // 73171059, F3171059
+7ChFzSbF4aik // IDA 6.5 // Old // 626D5BFE, E26D5BFE
+TuLWLErJwMHx // IDA 6.2 // New // CFD6740C
+6A8RYbHhHrH  // IDA 5.2 // Old // 1ADD7BD6, 9ADD7BD6
+eyKiZ5dXXzd  // Hex 1.1 // Old // 6253A857, E253A857
+
+7JpT48a7Y2fv // IDA 7.2 // New*// 0x3885ed18‬
+S7sJXgRYsDcD // IDA 6.3 // Old // 0x6a4712b1
+cGWEAHtQvRh  // IDA ??? // Old // 0x2ae733f4
+hXsmqU728vM  // Hex 1.3 // New // 0x0096d0f4
+TTW94mkV7KZ  // Hex 1.2 // Old // 0x0dbe52a6
+WhCMyM6KyYh  // Hex 0.9 // Old // 0x228ddf1f
+
+Where gen(erator): "Old" is Microsoft's LCG rand(), and "New" is FreeBSD's drand48()
+
+idauser:rfghj4632fADGZ IDA 6.3
+idauser:Bpgw03554hlevscP IDA 6.4
+idauser:Nrg034gsppY342acZ IDA 6.5
+idauser:dve3r04tgGswfxs22D IDA 6.8
+idauser:vef03fescQCWyt02aoV IDA 6.8
+

@@ -1,0 +1,21 @@
+$ innoextract --show-password x64_idapronw_hexx64w_181105_de455c480e11ef1ec91473028f4dd175.exe
+Inspecting "IDA Pro v7.2 and Hex-Rays Decompiler (x64)" - setup data version 5.5.7 (unicode)
+Password hash: SHA-1 f29f55f07c043ad34b3de150501535f44424edad
+Password salt: 50617373776f7264436865636b48617368c41639792846e456 (hex bytes, prepended to password)
+Password encoding: UTF-16LE
+Done.
+
+$ innoextract --show-password x86_hexx86w_181105_9ea55cadb246b0159f404645bb45aa18.exe
+Inspecting "Hex-Rays x86 Decompiler v7.2" - setup data version 5.5.7 (unicode)
+Password hash: SHA-1 53e5e63cb55ccf591b1ecc5d34c72e559f52908a
+Password salt: 50617373776f7264436865636b48617368f78d0356f47737af (hex bytes, prepended to password)
+Password encoding: UTF-16LE
+Done.
+
+$ innoextract --show-password ARM-hexx86w-181105-9ea55cadb246b0159f404645bb45aa18.exe
+Inspecting "Hex-Rays ARM Decompiler v7.2" - setup data version 5.5.7 (unicode)
+Password hash: SHA-1 2651500d4459a50803d81b71767e8391c706cfc3
+Password salt: 50617373776f7264436865636b48617368ebbd67f137092509 (hex bytes, prepended to password)
+Password encoding: UTF-16LE
+Done.
+
