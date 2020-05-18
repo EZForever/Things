@@ -26,10 +26,10 @@ def entropy_file(fp):
     return entropy, randomness
 
 def main():
-    with open(sys.argv[1], 'rb') as f:
-        e, r = entropy_file(f)
-    print('entropy =', e)
-    print('randomness =', r)
+    for file_name in sys.argv[1 : ]:
+        with open(file_name, 'rb') as f:
+            e, r = entropy_file(f)
+        print('%s: e = %.4f, r = %.4f' % (file_name, e, r))
 
 if __name__ == '__main__':
     main()
