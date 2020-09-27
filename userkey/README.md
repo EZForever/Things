@@ -104,7 +104,7 @@ keymgr!PRRecoverPassword --> s_SSRecoverPassword --> ???（未进行分析）
 
 ## 参考
 
-- http://www.voidcn.com/article/p-morngjmj-mk.html
+- https://blog.51cto.com/markwin/219205
 - https://docs.microsoft.com/en-us/windows/win32/seccrypto/rsa-schannel-key-blobs
 - https://technet.microsoft.com/zh-cn/learning/aa380258(v=vs.100).aspx
 - https://stackoverflow.com/a/19855935
