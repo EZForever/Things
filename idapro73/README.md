@@ -16,6 +16,14 @@ Apparently I cannot upload the modded binary and/or the original ones without [h
 
 btw, I've also tried to port x64 decompiler (`hexx64.dll`) from IDA Demo 7.5 downwards. Guess what? I made it, and of course, without (most of) the demo limitations.
 
+Limitations that are still there:
+
+- Some functions have their code removed, leaving a "full version only" message:
+	- "Jump to xref globally": `hx:JumpGlobalXref`, Ctrl-Alt-X
+	- "Create C file": `hx:CreateCFile`, Ctrl-F5, "File"-"Produce file"-"Create C file..."
+	- "Extract function": `hx:ExtractFunc`, None, "Help"-"Extract function"
+- ...
+
 ![IDA Pro 7.3 was the original goal](hexx64_7.5_7.3.png)
 
 ![But it works with IDA Pro 7.2 too](hexx64_7.5_7.2.png)
