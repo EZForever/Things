@@ -28,7 +28,11 @@ Limitations that are still there:
 
 ![But it works with IDA Pro 7.2 too](hexx64_7.5_7.2.png)
 
+IDA Pro 7.0 *might* work, but I have not tested it yet.
+
 *TODO: Description on what has been done*
 
 So another binary diff in <hexx64_7.5_7.x.txt>. Shoutout to [ericyudatou@bbs.pediy.com](https://bbs.pediy.com/thread-262435.htm), without your hard work this patch would be impossible.
+
+**UPDATE 2020-10-12**: Fixed a bug causing IDA to crash when decompiling an ELF64 file on IDA 7.2.
 
