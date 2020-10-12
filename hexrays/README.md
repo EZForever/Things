@@ -12,7 +12,7 @@ Binary diff in <hexx64_7.2_7.3.txt>.
 
 *TODO: Description on what has been done*
 
-### Hex-Rays 7.5 Demo for IDA 7.3/7.2/7.0?
+### Hex-Rays 7.5 Demo for IDA 7.2/7.3
 
 btw, I've also tried to port x64 decompiler (`hexx64.dll`) from IDA Demo 7.5 downwards. Guess what? I made it, and of course, without (most of) the demo limitations.
 
@@ -28,7 +28,7 @@ Limitations that are still there:
 
 ![But it works with IDA Pro 7.2 too](images/hexx64_7.5_7.2.png)
 
-IDA Pro 7.0 *might* work, but I have not tested it yet.
+IDA Pro 7.0 will **NOT** work (not supported, at least) because of an inconsistency between SDKs which is nearly unpatchable. (Hint: `interr(884)`, `type_t ud2` in `create_tinfo`)
 
 Binary diff in <hexx64_7.5_7.x.txt>. Shoutout to [ericyudatou@bbs.pediy.com](https://bbs.pediy.com/thread-262435.htm), without your hard work this patch would be impossible.
 
