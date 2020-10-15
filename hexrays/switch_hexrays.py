@@ -109,7 +109,7 @@ class hx_switch_plugin_t(idaapi.plugin_t):
     wanted_name = 'Switch Hex-Rays Decompiler'
     wanted_hotkey = 'Alt-F5'
 
-    plugin_t_run_dummy = WINFUNCTYPE(c_bool, c_size_t)(lambda arg: True)
+    plugin_t_run_dummy = IDAFUNCTYPE(c_bool, c_size_t)(lambda arg: True)
     hx_alternatives = [
         #'hexx64', # This only matches the current loaded decompiler
         ida_plugins.get_plugin_full_path('hexx64.dll'),
