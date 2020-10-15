@@ -22,6 +22,7 @@ Limitations that are still there:
 	- "Jump to xref globally": `hx:JumpGlobalXref`, Ctrl-Alt-X
 	- "Create C file": `hx:CreateCFile`, Ctrl-F5, "File"-"Produce file"-"Create C file..."
 	- "Extract function": `hx:ExtractFunc`, None, "Help"-"Extract function"
+- The "Rename global item" option in pseudocode view context menu does not work on IDA 7.2. Working on a fix.
 - ...
 
 ![IDA Pro 7.3 was the original goal](images/hexx64_7.5_7.3.png)
