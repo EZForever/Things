@@ -18,11 +18,13 @@ btw, I've also tried to port x64 decompiler (`hexx64.dll`) from IDA Demo 7.5 dow
 
 Limitations that are still there:
 
+- ~~Crash when decompiling functions that are referencing varargs functions on IDA 7.2~~ FIXED
+- The "Rename global item" option in pseudocode view context menu does not work on IDA 7.2.
+	- Hint: `callui()` with `ui_show_rename_dialog`, which is not existent on IDA 7.2
 - Some functions have their code removed, leaving a "full version only" message:
 	- "Jump to xref globally": `hx:JumpGlobalXref`, Ctrl-Alt-X
 	- "Create C file": `hx:CreateCFile`, Ctrl-F5, "File"-"Produce file"-"Create C file..."
 	- "Extract function": `hx:ExtractFunc`, None, "Help"-"Extract function"
-- The "Rename global item" option in pseudocode view context menu does not work on IDA 7.2. Working on a fix.
 - ...
 
 ![IDA Pro 7.3 was the original goal](images/hexx64_7.5_7.3.png)
