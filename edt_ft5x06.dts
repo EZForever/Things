@@ -1,0 +1,78 @@
+/*
+  EDT-FT5x06 touchscreen device tree for RPi B+/2/3
+
+  Used GPIO pins (in BCM numbering):
+    2 - SDA, 3 - SCL,
+    5 - INT, 6 - WAKE
+  RST is not populated, so not here
+*/
+
+/* Compile tool: `apt-get install flex bison && git clone git://git.kernel.org/pub/scm/utils/dtc/dtc.git` */
+/* Compile command: https://github.com/notro/fbtft/wiki/FBTFT-RPI-overlays */
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835", "brcm,bcm2708", "brcm,bcm2709"; /* ??? */
+
+	fragment@0 {
+		target = <&gpio>;
+
+		__overlay__ {
+			edt_ft5x06_pins: edt_ft5x06_pins {
+				brcm,pins = <5 6>;
+				brcm,function = <0 1>; /* in out */
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c_arm>; /* Same thing as &i2c1, BCM pin 2&3 */
+
+		__overlay__ {
+			/* Needed to avoid dtc warning */
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			/* This makes "dtparam=i2c_arm=on" and/or "dtparam=i2c1=on" default */
+			status = "okay";
+
+			/* A workaround to fix `Unable to fetch data, error: -121` errors
+			RPi's I2C implementation has a hardware bug which, on clock stretching, corrupts data.
+			FT5x06's supported SCL frequency from datasheet is <= 400000, so maybe slowing it down works.
+			See https://github.com/fivdi/i2c-bus/issues/36
+			Default clock frequency value is 100000
+			*/
+			clock-frequency = <10000>;
+
+			edt_ft5x06: touchscreen@38 {
+				compatible = "edt,edt-ft5406", "edt,edt-ft5x06";
+				status = "okay"; /* Opposite is "disabled" */
+
+				reg = <0x38>;
+				pinctrl-names = "default";
+				pinctrl-0 = <&edt_ft5x06_pins>;
+				interrupt-parent = <&gpio>;
+				interrupts = <5 2>; /* IRQ_TYPE_EDGE_FALLING */
+				wake-gpios = <&gpio 6 0>; /* GPIO_ACTIVE_HIGH */
+
+				touchscreen-size-x = <800>;
+				touchscreen-size-y = <480>;
+				touchscreen-fuzz-x = <4>;
+				touchscreen-fuzz-y = <7>;
+				/* No pressure settings, or `DT specifies parameters but the axis 58 is not set up` */
+			};
+		};
+	};
+
+	__overrides__ {
+		size-x =	<&edt_ft5x06>, "touchscreen-size-x:0";
+		size-y =	<&edt_ft5x06>, "touchscreen-size-y:0";
+		fuzz-x =	<&edt_ft5x06>, "touchscreen-fuzz-x:0";
+		fuzz-y =	<&edt_ft5x06>, "touchscreen-fuzz-y:0";
+		invert-x =	<&edt_ft5x06>, "touchscreen-inverted-x?";
+		invert-y =	<&edt_ft5x06>, "touchscreen-inverted-y?";
+		swap-xy =	<&edt_ft5x06>, "touchscreen-swapped-x-y?";
+	};
+};
