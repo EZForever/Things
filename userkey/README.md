@@ -1,5 +1,11 @@
 # 创建密码重置盘的时候，系统都做了些什么
 
+*注：本文作为一篇研究报告，最早发布于[我的GitHub repo](https://github.com/EZForever/Things/tree/master/userkey)。进行格式整理与更新后在这里重新发布。*
+
+“密码重置盘”是从Windows XP开始即加入Windows系统，并且一直保留至今的一项功能。其目的是在用户忘记登录密码时，可以使用预先创建好的物理凭据重置密码。
+
+几年前，我在网上找到了[一位前辈对密码重置盘功能的基于行为的分析](https://blog.51cto.com/markwin/219205)，由此对这个功能产生了研究兴趣。本研究报告编写于去年暑假，花了三天时间，基于逆向工程对密码重置盘功能进行分析。
+
 ## 基本原理
 
 密码重置盘的本质是一个RSA私钥，用于解密在系统中（为密码重置而专门）存储的用户密码。
@@ -7,7 +13,7 @@
 创建密码重置盘时，系统会生成一个RSA公私钥对和一张自签名的证书。用户密码被公钥加密并签名，并和证书一起存储在计算机中（具体细节见下）；私钥则被保存在密码重置盘根目录下的`userkey.psw`文件中。
 
 由这个过程，我们可以得到密码重置盘的几个性质：
-- 密码重置盘与用户和密码密切相关；更换用户~~或用户更换密码~~（参见`README-More.md`），密码重置盘会失效。
+- 密码重置盘与用户一一对应；更换用户，密码重置盘会失效。
 - 系统识别密码重置盘只会看根目录下的`userkey.psw`文件，与其他文件一律无关。由此，使用一个可移动介质做多张密码重置盘是可行的，不过需要每次使用之前手动修改文件名。
 - 密码重置盘只能重置密码是系统有意进行的限制。由密码重置盘恢复密码是可能的。
 
@@ -15,7 +21,7 @@
 
 ## 技术细节
 
-值得注意的是，微软在密码重置盘这个功能上基本没有做出过任何改动/改进。下文中，若非特殊说明，分析结论适用于自Windows XP开始所有版本的Windows。
+值得注意的是，微软在密码重置盘这个功能上基本没有做出过任何改动或改进。下文中，若非特殊说明，分析结论适用于自Windows XP开始所有版本的Windows。
 
 ### 0. 向导程序的手动调用方式
 
@@ -25,7 +31,7 @@
 
 创建向导（指定用户）：`rundll32 keymgr.dll,PRShowSaveFromMsginaW <用户名>`
 
-重置向导（指定用户）：`rundll32 keymgr.dll,PRShowRestoreWizardEx <用户名>`（参见`README-More.md`）
+重置向导（指定用户）：`rundll32 keymgr.dll,PRShowRestoreWizardEx <用户名>`
 
 在启动向导之前要确保电脑中已有可移动介质插入，否则向导会报错，拒绝启动。
 
@@ -73,42 +79,58 @@
 
 由界面到生成逻辑的引用链如下所示（符号名称来自PDB）：
 ```
-PRShowSaveWizardExW --> SPageProc1 --> SaveThread --> SaveInfo（进入逻辑部分）
-    SaveInfo（返回时保存私钥） --> PRGenerateRecoveryKey（生成私钥） --> GenerateRecoveryCert（生成证书）
-    PRGenerateRecoveryKey --> PRImportRecoveryKey（RPC，通知系统保存密码）
+PRShowSaveWizardExW
+  SPageProc1
+    SaveThread
+      SaveInfo（进入逻辑部分，返回时保存私钥）
+        PRGenerateRecoveryKey（生成私钥）
+          GenerateRecoveryCert（生成证书）
+          PRImportRecoveryKey（RPC，通知系统保存密码）
 
-PRShowRestoreWizardExW --> PRShowRestoreWizardW --> RPageProc1 --> SetAccountPassword（进入逻辑部分）
-    SetAccountPassword --> PRRecoverPassword（RPC，通知系统验证与修改密码）
+PRShowRestoreWizardExW
+  PRShowRestoreWizardW
+    RPageProc1
+      SetAccountPassword（进入逻辑部分）
+        PRRecoverPassword（RPC，通知系统验证与修改密码）
 ```
 
-两边的调用链都终止于RPC调用，确切的说是LPC端口`protected_storage`。有趣的是提供这个端口的服务`Protected Storage`服务早在Windows 8时就因为不安全而被移除了，但Windows 10中这个功能仍然可用。
+两条调用链都终止于RPC调用，确切的说是LPC端口`protected_storage`。有趣的是提供这个端口的服务`Protected Storage`服务早在Windows 8时就因为不安全而被移除了，但Windows 10中这个功能仍然可用。
 
 查阅资料得到关键信息：这个端口下有`PasswordRecovery`接口，GUID为`5cbe92cb-f4be-45c9-9fc9-33e73e557b20`。使用RpcView工具轻易查到，提供这个接口的模块是由`lsass.exe`加载的`dpapisrv.dll`。
 
-*P.S. RpcView的上次更新是2017年，又因为有对系统文件版本的检查，导致其无法使用。最终对程序进行了二进制修改。*
+*P.S. RpcView的上次Release是2017年，又因为有对系统文件版本的检查，导致其拒绝启动。最终对程序进行了patch才能用。~~所以为啥RpcView不放Release啊~~*
 
 接口中的三个方法调用链如下：
 ```
-keymgr!PRImportRecoveryKey --> s_SSRecoverImportRecoveryKey --> EncryptRecoveryPassword（构造注册表数据并保存） --> （各类细化的操作）
+keymgr!PRImportRecoveryKey
+  s_SSRecoverImportRecoveryKey
+    EncryptRecoveryPassword（构造注册表数据并保存）
+      （各类细化的操作）
 
-keymgr!PRRecoverPassword --> s_SSRecoverPassword --> ???（未进行分析）
+keymgr!PRRecoverPassword
+  s_SSRecoverPassword
+    ???（未进行分析）
 
-??? --> s_SSRecoverQueryStatus --> ???（这个方法好像没用到）
+???
+  s_SSRecoverQueryStatus
+    ???（这个方法好像没用到）
 ```
 
 注册表数据中的SHA1和签名分别由API `CertGetCertificateContextProperty`和内部函数`LogonCredGenerateSignature`生成，过程复杂，未进行分析。
 
 负责加密的是API `BCryptEncrypt`函数，之后由`FMyReverseBytes`进行字节顺序翻转。
 
-最后保存数据的是`RecoverySetSupplementalCredential`函数。由此可见，微软内部称密码重置盘的证书为“追加证书”。那个让前辈不明所以的GUID字符串`C80ED86A-0D28-40dc-B379-BB594E14EA1B`也得到了解释：这个字符串是硬编码进去的。
+最后保存数据的是`RecoverySetSupplementalCredential`函数。由此可见，微软内部称密码重置盘为“追加凭据”。那个让前辈不明所以的GUID字符串`C80ED86A-0D28-40dc-B379-BB594E14EA1B`也得到了解释：这个字符串是硬编码进去的，不具备什么实际意义。
+
+*更多逆向工程细节（以及伪造密码重置盘的尝试）参见[本文后续](https://bbs.pediy.com/thread-262544.htm)*
 
 ## 参考
 
-- https://blog.51cto.com/markwin/219205
-- https://docs.microsoft.com/en-us/windows/win32/seccrypto/rsa-schannel-key-blobs
-- https://technet.microsoft.com/zh-cn/learning/aa380258(v=vs.100).aspx
-- https://stackoverflow.com/a/19855935
-- https://l.wzm.me/_security/internet/_internet/WinServices/ch04s10s15.html
-- https://reverseengineering.stackexchange.com/a/8118
-- https://github.com/silverf0x/RpcView
+- <https://blog.51cto.com/markwin/219205>
+- <https://docs.microsoft.com/en-us/windows/win32/seccrypto/rsa-schannel-key-blobs>
+- <https://technet.microsoft.com/zh-cn/learning/aa380258(v=vs.100).aspx>
+- <https://stackoverflow.com/a/19855935>
+- <https://l.wzm.me/_security/internet/_internet/WinServices/ch04s10s15.html>
+- <https://reverseengineering.stackexchange.com/a/8118>
+- <https://github.com/silverf0x/RpcView>
 
