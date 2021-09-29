@@ -1,0 +1,68 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\Detected]
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\Detected\Ramdisk]
+"ramdisk.inf"=hex:02,ff,01,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\DetectedInternal]
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\DetectedInternal\Ramdisk]
+"ramdisk.inf"=hex:02,ff,00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\Ramdisk]
+"ramdisk.inf"=hex:01,ff,00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\Ramdisk\RamVolume]
+"ramdisk.inf"=hex:01,ff,00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\root\Ramdisk]
+"ramdisk.inf"=hex:02,ff,02,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DeviceIds\{9d6d66a6-0b0c-4563-9077-a0e9a7955ae4}]
+"ramdisk.inf"=hex(0):
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DriverInfFiles\ramdisk.inf]
+@=hex(7):72,00,61,00,6d,00,64,00,69,00,73,00,6b,00,2e,00,69,00,6e,00,66,00,5f,\
+  00,61,00,6d,00,64,00,36,00,34,00,5f,00,63,00,32,00,31,00,36,00,62,00,35,00,\
+  61,00,30,00,38,00,64,00,37,00,37,00,39,00,36,00,32,00,63,00,00,00,00,00
+"Active"="ramdisk.inf_amd64_c216b5a08d77962c"
+"Configurations"=hex(7):42,00,75,00,73,00,49,00,6e,00,73,00,74,00,61,00,6c,00,\
+  6c,00,2e,00,4e,00,54,00,00,00,00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\DriverDatabase\DriverPackages\ramdisk.inf_amd64_c216b5a08d77962c]
+@="ramdisk.inf"
+"Provider"="Microsoft"
+"SignerScore"=dword:80000000
+"StatusFlags"=dword:00000012
+"Version"=hex:00,ff,09,00,00,00,00,00,a6,66,6d,9d,0c,0b,63,45,90,77,a0,e9,a7,\
+  95,5a,e4,00,80,8c,a3,c5,94,c6,01,01,00,61,4a,00,00,0a,00,00,00,00,00,00,00,\
+  00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{9d6d66a6-0b0c-4563-9077-a0e9a7955ae4}]
+"Class"="Ramdisk"
+"ClassDesc"="@ramdisk.inf,%ClassName%;RAM Disk drives"
+"SilentInstall"="1"
+"IconPath"=hex(7):25,00,53,00,79,00,73,00,74,00,65,00,6d,00,52,00,6f,00,6f,00,\
+  74,00,25,00,5c,00,53,00,79,00,73,00,74,00,65,00,6d,00,33,00,32,00,5c,00,73,\
+  00,65,00,74,00,75,00,70,00,61,00,70,00,69,00,2e,00,64,00,6c,00,6c,00,2c,00,\
+  2d,00,35,00,34,00,00,00,00,00
+"LastDeleteDate"=hex:a6,d9,1c,06,2d,84,d7,01
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk]
+"Type"=dword:00000001
+"Start"=dword:00000003
+"ErrorControl"=dword:00000001
+"ImagePath"=hex(2):5c,00,53,00,79,00,73,00,74,00,65,00,6d,00,52,00,6f,00,6f,00,\
+  74,00,5c,00,73,00,79,00,73,00,74,00,65,00,6d,00,33,00,32,00,5c,00,44,00,52,\
+  00,49,00,56,00,45,00,52,00,53,00,5c,00,72,00,61,00,6d,00,64,00,69,00,73,00,\
+  6b,00,2e,00,73,00,79,00,73,00,00,00
+"DisplayName"="@ramdisk.inf,%RamdiskServiceDesc%;Windows RAM Disk Driver"
+"BootFlags"=dword:00000100
+"Owners"=hex(7):72,00,61,00,6D,00,64,00,69,00,73,00,6B,00,2E,00,69,00,6E,00,66,\
+  00,00,00,00,00
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Ramdisk\Debug]
+"DebugComponents"=dword:7fffffff
+"DebugLevel"=dword:00000005
+
