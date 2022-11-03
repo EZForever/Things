@@ -4,7 +4,7 @@ import math
 
 '''
     Entropy does not consider the order of bytes.
-    python3 -c 'with open("seq256.bin", "wb") as f: f.write(bytes([x for x in range(256)]))'
+    python3 -c 'with open("seq256.bin", "wb") as f: f.write(bytes(range(256)))'
     The file 'seq256.bin' will have a entropy of 8.0 (i.e. randomness == 1.0)
 '''
 
