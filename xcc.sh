@@ -54,7 +54,7 @@ echo "$shebang" 1>&2
 echo 1>&2
 
 # actually run the shebang line and collect result
-__="$script" /bin/bash -c "exec $shebang"
+__="$script" /bin/bash -c "$shebang"
 errno=$?
 
 # deal with incomplete output line
