@@ -13,13 +13,14 @@ query Windows magic numbers from MagNumDB (https://www.magnumdb.com/).
 
     -h, --help     display this help and exit
     -v, --verbose  show verbose results (e.g. GUID formats)
-    -k, --apikey   specify API key (default to read from ~/.config/mndb.conf)
-    -n, --items    maximum number of items per query (default unlimited)
+    -k, --apikey   specify API key (default to read from config)
+    -n, --items    maximum number of items per query (default to read from config)
 
-mndb.conf takes the form of:
+config file (~/.config/mndb.conf) takes the form of:
 
     [mndb]
     apikey=<your API key here>
+    items=<default maximum>
 
 to obtain an API key, please contact the maintainers of MagNumDB.
 '''
@@ -27,8 +28,10 @@ to obtain an API key, please contact the maintainers of MagNumDB.
 def print_value_item(verbose: bool, item: dict[str, Any]) -> None:
     if 'HexValue' in item and 'SignedValue' in item:
         print(f'\thex {item["HexValue"]} / signed {item["SignedValue"]} / unsigned {item["Value"]}')
-    else:
+    elif 'Value' in item:
         print(f'\t{item["Value"]}')
+    else:
+        print(f'\t// no value available; enable verbose mode?')
     
     # XXX: Certain GUID entries is of ValueItem
     if verbose and 'GuidFormats' in item:
@@ -48,6 +51,16 @@ def main(argv: list[str]) -> int:
     verbose = False
     apikey: str = None
     items = -1
+    
+    try:
+        conf = configparser.ConfigParser()
+        conf.read(os.path.expanduser('~/.config/mndb.conf'))
+    except:
+        pass
+    else:
+        apikey = conf.get('mndb', 'apikey', fallback = None)
+        items = conf.getint('mndb', 'items', fallback = -1)
+
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print(USAGE, file = sys.stderr)
@@ -66,13 +79,8 @@ def main(argv: list[str]) -> int:
             print(f'{argv[0]}: ignoring unknown option {opt}', file = sys.stderr)
 
     if apikey is None:
-        try:
-            conf = configparser.ConfigParser()
-            conf.read(os.path.expanduser('~/.config/mndb.conf'))
-            apikey = conf['mndb']['apikey']
-        except Exception as exc:
-            print(f'{argv[0]}: unable to read API key: {exc}', file = sys.stderr)
-            return 2
+        print(f'{argv[0]}: API key not specified; provide mndb.conf or -k', file = sys.stderr)
+        return 2
 
     session = requests.Session()
     for arg in args:
@@ -121,8 +129,8 @@ def main(argv: list[str]) -> int:
             if verbose:
                 print(f'// {item["DisplayFilePath"]}')
                 for condition in item['Conditions']:
-                    print(f'// - {condition}')
-                print('\n'.join(item['Source'].splitlines()))
+                    print(f'// #{condition}')
+                print('\n'.join(item.get('Source', '// source not available').splitlines()))
             
             print()
 
