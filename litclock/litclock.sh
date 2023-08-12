@@ -38,7 +38,7 @@ function litclock {
     shopt -u nocasematch
     
     # NOTE: That additional 9 is from ANSI sequences in $cite
-    printf "%s\n\e[1;30m%*s\e[0m\n" "$quote" $((80 + 9)) "$cite"
+    printf "%s\n\e[1;30m%*s\e[0m\n" "$quote" $(($COLUMNS + 9)) "$cite"
     return 0
 }
 
