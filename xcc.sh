@@ -22,7 +22,7 @@ if [ ! -f "$script" ]; then
 fi
 
 # read the selected shebang line
-for _ in {1..$lineno}; do
+for (( i = 0; i < $lineno; i++ )); do
 	read line
 done < $script
 
