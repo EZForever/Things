@@ -98,7 +98,7 @@ def main(argv: list[str]) -> int:
             continue
         
         resp = req.json()
-        total = resp["TotalHits"]
+        total = resp.get('TotalHits', len(resp['Items']))
         print(f'// {total} match(es) found for "{resp["OriginalText"]}", {min(total, items) if items >= 0 else total} shown')
         print()
         
