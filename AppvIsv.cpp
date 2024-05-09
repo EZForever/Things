@@ -26,7 +26,7 @@ int main()
 {
 	// Get Office base path: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun#PackageFolder:REG_SZ
 	// AppvIsvSubsystems64.dll loads C2R64.dll
-	HMODULE hmod = LoadLibraryExW(L"C:\\Program Files\\Microsoft Office\\root\\Client\\AppvIsvSubsystems64.dll", NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR);
+	HMODULE hmod = LoadLibraryExW(L"C:\\Program Files\\Microsoft Office\\root\\Client\\AppvIsvSubsystems64.dll", NULL, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 	if (!hmod)
 	{
 		fprintf(stderr, "LoadLibraryExW(AppvIsvSubsystems64.dll) failed, GetLastError() = %u\n", GetLastError());
