@@ -60,13 +60,8 @@ function __ps1_venv {
 # Before: /usr/include/x86_64-linux-gnu/c++/6.3.0/bits
 # After : /usr/include/x86…gnu/c++/6.3.0/bits
 function __ps1_pwd {
-    if [[ "$PWD" == "/" ]]; then
-        echo -n "/"
-        return
-    fi
-
     local homepwd='\w'
-    local homepwd="${homepwd@P}"
+    local homepwd="${homepwd@P}/"
 
     local IFS='/'
     local elems=(${homepwd})
@@ -89,14 +84,15 @@ function __ps1_pwd {
 # After : /usr/include/…/bits
 function __ps1_pwd2 {
     local homepwd='\w'
-    local homepwd="${homepwd@P}"
+    local homepwd="${homepwd@P}/"
 
     local IFS='/'
     local elems=(${homepwd})
     local len=${#elems[@]}
     
     if [[ $len -le 4 ]]; then
-        __PS1_PWD2="$homepwd"
+        local IFS='/'
+        __PS1_PWD2="${elems[*]}"
     else
         __PS1_PWD2="${elems[0]}/${elems[1]}/${elems[2]}/…/${elems[0-1]}"
     fi
