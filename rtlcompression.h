@@ -76,6 +76,7 @@ NT_RTL_COMPRESSION_API RtlDecompressBufferEx2(
 
 #ifdef __NTSTATUS_NOT_DEFINED
 #   undef NTSTATUS
+#   undef __NTSTATUS_NOT_DEFINED
 #endif
 
 #ifdef __cplusplus
