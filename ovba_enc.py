@@ -2,20 +2,20 @@
 import random
 import itertools
 
-# The algorithm for encrypting VBA project protection fields
+# The algorithm for encrypting VBA project protection fields, with modifications
 # See [MS-OVBA], section 2.4.3; also section 2.3.1.15 to 2.3.1.17
 
-def ovba_enc(projid: str, seed: int, version: int, data: bytes) -> str:
-    assert seed & 0xFF == seed
-    assert version in (1, 2)
+def ovba_enc(projid: str | None, seed: int, data: bytes) -> str:
     buf = bytearray()
     
+    assert seed & 0xFF == seed
     buf.append(seed)
     
-    ve = seed ^ version
+    v = 1 if projid is None else 2
+    ve = seed ^ v
     buf.append(ve)
     
-    pk = sum(projid.encode('ascii')) & 0xFF
+    pk = 0x47 if projid is None else sum(projid.encode('ascii')) & 0xFF
     pke = seed ^ pk
     buf.append(pke)
     
@@ -23,8 +23,13 @@ def ovba_enc(projid: str, seed: int, version: int, data: bytes) -> str:
     eb1 = pke
     eb2 = ve
     
+    # One interesting thing to note: the "Ignore" field produced by VBA is always the seed byte repeating
+    # This is probably an oversight somewhere in calculation since "proper" randomness is attempted by calling GetTickCount for each of the bytes
+    # Spec says that it "could be any value". I guess that includes byte repeating. So well
     il = (seed & 6) // 2
-    i = [random.randint(0, 0xFF) for _ in range(il)]
+    #i = [random.randint(0, 0xFF) for _ in range(il)]
+    i = [seed] * il
+
     dl = len(data).to_bytes(4, 'little')
     for b in itertools.chain(i, dl, data):
         be = b ^ ((eb2 + ub1) & 0xFF)
@@ -42,8 +47,8 @@ def ovba_dec(encrypted: str) -> (int, int, bytes):
     seed = buf.pop(0)
     
     ve = buf.pop(0)
-    version = seed ^ ve
-    assert version in (1, 2)
+    v = seed ^ ve
+    assert v in (1, 2)
     
     pke = buf.pop(0)
     pk = seed ^ pke
@@ -65,26 +70,22 @@ def ovba_dec(encrypted: str) -> (int, int, bytes):
     data = data[il : ]
     dl, data = data[ : 4], data[4 : ]
     assert int.from_bytes(dl, 'little') == len(data)
-    return seed, version, bytes(data)
+    return pk, seed, bytes(data)
 
 # ---
 
 ID="{9E76F5A0-DAC8-4521-BCEF-644697F88708}"
 CMG="1715EF1A11262C2A2C2A2C2A2C2A"
 
-seed, version, data = ovba_dec(CMG)
+pk, seed, data = ovba_dec(CMG)
 assert int.from_bytes(data, 'little') == 0
 
 data = (0b100).to_bytes(4, 'little')
-print(ovba_enc(ID, seed, version, data))
-
-# One interesting thing to note: the "Ignore" field produced by VBA is always the same byte repeating
-# This is probably an oversight in calculation since "proper" randomness is attempted by calling GetTickCount for each of the bytes
-# Spec says that it "could be any value". I guess that includes byte repeating. So well
+print(ovba_enc(ID, seed, data))
 
 # ---
 
-# VBA SDK license keys also use this algorithm (with version == 1, hence the support in routines above)
+# VBA SDK license keys also use this algorithm (with v == 1, pk fixed to 0x47 == 71, hence the support in routines above)
 # Data field: YYMMDDNNFFFFFFFFX, e.g. for eval key it is "990625017FFEF180\x00"
 # - YYMMDD: ASCII, license issue date
 # - NN: ASCII, license number of the date? (Only seen "01")
