@@ -89,11 +89,11 @@ print(ovba_enc(ID, seed, data))
 # Data field: YYMMDDNNFFFFFFFFX, e.g. for eval key it is "990625017FFEF180\x00"
 # - YYMMDD: ASCII, license issue date
 # - NN: ASCII, license number of the date? (Only seen "01")
-# - FFFFFFFF: Hex, feature flags? (Only seen "7FFEF180")
-# - X: Raw byte, unknown (Seen \x00 and \x03)
+# - FFFFFFFF: Hex, license expire timestamp (Only seen "7FFEF180", which stands for 2038-01-18T08:00:00.000Z)
+# - X: Raw byte, unknown, probably ignored (Seen \x00 and \x03)
 
-# The algorithm is implemented in VBA as VBE7!Project::Encrypt and VBE7!Project::Unencrypt
-# However no xrefs outside of reading/writing project protection fields is seen
+# The key is seen to be validated in VBA6MTRT.DLL ("MT Designer RT", exclusive to VBA 6.0 SDK), see VBA6MTRT!VerifyCookie
+# However in VBA itself, the algorithm is implemented in VBA as VBE7!Project::Encrypt and VBE7!Project::Unencrypt, with no xref outside of reading/writing project protection fields is seen
 # Thus there is currently no evidence that VBA performs any kind of validation on the license key
 
 lickeys = [
