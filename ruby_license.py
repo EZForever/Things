@@ -15,7 +15,7 @@
 
 # #3 is basically the same as #2, but is a bit interesting since VBA don't have editions of sorts
 # Only one hardcoded LICID is checked, and VBE7!Rby_Edition is set to 3 ("Enterprise") or 0 ("Working Model") based on its presence
-# Which means VBA is running most of the time as a "Working Model", unless Office 2000 Developer is installed, which includes the license key
+# Which means VBA is running most of the time as a "Working Model", unless Office 2000 Developer is installed, which includes the license key (bundled with MSADDNDR.DLL, the "AddIn Designer"; see Setup\ode98ent.stf on CD)
 # This license enables VBA's standalone mode, allowing it to create and open standalone VBA projects (with a .vba file extension) independent of the host application
 # Moreover, a "Build DLL" option is enabled to compile standalone VBA projects into ActiveX DLL. It requires a LINK.EXE from VC6 era, which is provided by Office 2000 Developer
 # Some of these standalone functionalities is briefly mentioned in VBA help files and VBA SDK documentations
