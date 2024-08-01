@@ -50,8 +50,7 @@ fi
 # print out shebang line for inspection
 [ -n "$real_shebang" ] && line="$line $script"
 shebang="$line $*"
-echo "$shebang" 1>&2
-echo 1>&2
+printf "\e[7m$ %s\e[27m\n" "$shebang" 1>&2
 
 # actually run the shebang line and collect result
 __="$script" /bin/bash -c "$shebang"
@@ -62,7 +61,6 @@ read -s -p $'\e[6n' -d R linepos
 [[ "$linepos" == *";1" ]] || echo -ne "\e[48;5;233m\e[K\n\e[0m\e[K" 1>&2
 
 # show exit code
-echo 1>&2
-printf "[ Process exited with code %d (0x%02x) ]\n" $errno $errno 1>&2
+printf "\e[7m[ Process exited with code %d (0x%02x) ]\e[27m\n" $errno $errno 1>&2
 exit $errno
 
