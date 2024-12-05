@@ -116,7 +116,7 @@ def main(argv: list[str]) -> int:
                 print(f'\t{item["ValueType"]} member of enum {item["Parent"]}')
                 print_value_item(verbose, item)
             elif item_type == 'GuidItem':
-                guid_type = item['GuidType'] if 'GuidType' in item else 'Unknown'
+                guid_type = item['GuidType'] if 'GuidType' in item else 'Generic'
                 print(f'\t{guid_type} GUID of type {item["ValueType"]}')
                 print_value_item(verbose, item)
             elif item_type == 'EnumItem':
