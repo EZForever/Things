@@ -44,7 +44,7 @@ function __ps1_errno {
 
 # Shell level indicator
 function __ps1_shlvl {
-    [[ $SHLVL -gt 1 ]] && __PS1_SHLVL="+$SHLVL " || __PS1_SHLVL=""
+    [[ $SHLVL -gt 1 ]] && __PS1_SHLVL="+$(($SHLVL-1)) " || __PS1_SHLVL=""
 }
 
 # 'Construct' MSYSTEM to repersent chroot ($debian_chroot) and virtualenv ($VIRTUAL_ENV)
