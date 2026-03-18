@@ -52,7 +52,7 @@ function __ps1_shlvl {
 function __ps1_venv {
     local venv="$__PS1_FG_TEXT$MSYSTEM$__PS1_RESET_BG"
     venv+="${debian_chroot:+$__PS1_FG_TEXT2:$debian_chroot$__PS1_RESET_BG}"
-    venv+="${VIRTUAL_ENV:+$__PS1_FG_TEXT2 (`basename $VIRTUAL_ENV`)$__PS1_RESET_BG}"
+    venv+="${VIRTUAL_ENV:+$__PS1_FG_TEXT2 (`basename "$VIRTUAL_ENV"`)$__PS1_RESET_BG}"
     __PS1_VENV="$venv"
 }
 
