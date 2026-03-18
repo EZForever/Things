@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import os
 import sys
+import json
 import getopt
+import urllib.parse
+import urllib.request
 import configparser
-
-import requests
 
 from typing import Any
 
@@ -82,19 +83,17 @@ def main(argv: list[str]) -> int:
         print(f'{argv[0]}: API key not specified; provide mndb.conf or -k', file = sys.stderr)
         return 2
 
-    session = requests.Session()
     for arg in args:
         try:
-            req = session.get('https://www.magnumdb.com/api.aspx', params = {
+            url = 'https://www.magnumdb.com/api.aspx?' + urllib.parse.urlencode({
                 'q': arg,
                 'key': apikey
             })
+            with urllib.request.urlopen(url) as req:
+                resp = json.loads(req.read())
         except Exception as exc:
+            import traceback
             print(f'{argv[0]}: unable to send query: {exc}', file = sys.stderr)
-            continue
-
-        if req.status_code != 200:
-            print(f'{argv[0]}: server response error {req.status_code}: {req.text}', file = sys.stderr)
             continue
         
         resp = req.json()
